@@ -441,7 +441,8 @@ dialog.sheet::backdrop { background: var(--backdrop); animation: fade-in 0.25s e
 @keyframes fade-in { from { opacity: 0; } }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 12px 10px 22px; flex: none; }
 .sheet-title { font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: -0.01em; }
-.sheet-body { padding: 4px 22px 22px; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
+/* "1 1 auto", not "1": the sheet has no fixed height, and with a 0% basis Safari sizes this to nothing. */
+.sheet-body { padding: 4px 22px 22px; overflow-y: auto; overscroll-behavior: contain; flex: 1 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
 .sheet-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 22px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); flex: none; flex-wrap: wrap; }
 .sheet-body:focus { outline: none; }
 .sheet-body > p { color: var(--ink-2); }
