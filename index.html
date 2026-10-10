@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Step 1 planner</title>
+    <meta name="description" content="A personal USMLE Step 1 study planner." />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2ece1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Step 1" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23426449'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' fill='none' stroke='%23fbf8f2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+    />
+    <script>
+      // Apply the saved theme before the first paint so the page never flashes the wrong one.
+      try {
+        var t = JSON.parse(localStorage.getItem('step1.theme') || '"auto"');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..600&family=Fraunces:opsz,wght@9..144,400..600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="lock" class="lock" hidden></div>
+
+    <div id="app" class="app" hidden>
+      <header class="top">
+        <div class="brand">
+          <span class="brand-name">Step 1</span>
+          <span class="brand-sub" id="countdown"></span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="sync-btn" type="button" hidden></button>
+          <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch between light and dark"></button>
+          <button class="icon-btn" id="settings-btn" type="button" aria-label="Settings"></button>
+        </div>
+      </header>
+
+      <div id="banner" class="banner" hidden></div>
+
+      <main class="layout" id="layout" data-tab="progress">
+        <section class="center" aria-label="Day by day">
+          <div class="stage" id="stage" role="group" aria-roledescription="carousel" aria-label="Study days"></div>
+          <nav class="daynav" aria-label="Move between days">
+            <button class="nav-btn" id="prev-btn" type="button" aria-label="Previous day"></button>
+            <button class="today-btn" id="today-btn" type="button">Today</button>
+            <button class="nav-btn" id="next-btn" type="button" aria-label="Next day"></button>
+          </nav>
+          <p class="sr-only" id="announce" aria-live="polite"></p>
+          <div class="status" id="status"></div>
+        </section>
+
+        <div class="tabs" role="tablist" aria-label="Panels">
+          <button class="tab" role="tab" type="button" id="tab-progress" data-tab="progress" aria-controls="panel-progress">Progress</button>
+          <button class="tab" role="tab" type="button" id="tab-calendar" data-tab="calendar" aria-controls="panel-calendar">Calendar</button>
+        </div>
+
+        <section class="panel panel-progress" id="panel-progress" aria-labelledby="progress-h"></section>
+        <section class="panel panel-calendar" id="panel-calendar" aria-labelledby="calendar-h"></section>
+      </main>
+    </div>
+
+    <div id="sheets"></div>
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+    <noscript><p style="padding: 24px; font-family: sans-serif">This planner needs JavaScript to run.</p></noscript>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

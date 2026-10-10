@@ -1,0 +1,8 @@
+{
+  "name": "step1-planner",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
