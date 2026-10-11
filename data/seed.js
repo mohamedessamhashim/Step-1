@@ -103,7 +103,7 @@ export const SEED = {
     },
     randomAfterSa1: true,
     anki: true, // "Anki reviews" as the first task of every study day; fine to skip
-    reviewMinutes: 20,
+    reviewHours: { from: 2, to: 4 }, // reviewing incorrects and guessed corrects, after the blocks
     goalPct: null,
     daysOff: {}, // { 'YYYY-MM-DD': 'label' }
     extras: {}, // { 'YYYY-MM-DD': extra questions added by a rebalance }

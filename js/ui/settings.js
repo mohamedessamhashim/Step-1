@@ -162,7 +162,17 @@ export function openSettings(store, app, start = 'plan') {
         'Daily tasks',
         toggleRow('anki', 'Anki reviews every morning', 'Listed first on each study day. Skipping it never counts against the day.', s.anki, (v) => set('anki', v, `Anki reviews: ${v ? 'on' : 'off'}`)),
         toggleRow('randomAfterSa1', 'Random blocks after self-assessment #1', 'Before it, blocks follow the day’s First Aid chapter. Dedicated is always random.', s.randomAfterSa1, (v) => set('randomAfterSa1', v, `Random blocks after self-assessment #1: ${v ? 'on' : 'off'}`)),
-        settingRow('Review incorrects (minutes)', 'reviewMinutes', { max: 240 }),
+        row(
+          'Reviewing incorrects and guessed corrects (hours)',
+          'Shown on the task, after the blocks and before First Aid.',
+          h(
+            'div',
+            { style: { display: 'flex', alignItems: 'center', gap: '8px', flex: 'none' } },
+            numberInput('reviewHours.from', 'Review, at least (hours)', s.reviewHours.from, { max: 12, onCommit: (v) => (v === null ? refresh() : set('reviewHours.from', v, `Review time: from ${v} hours`) || refresh()) }),
+            h('span', { class: 'muted', text: 'to' }),
+            numberInput('reviewHours.to', 'Review, at most (hours)', s.reviewHours.to, { max: 12, onCommit: (v) => (v === null ? refresh() : set('reviewHours.to', v, `Review time: up to ${v} hours`) || refresh()) }),
+          ),
+        ),
       ),
     ];
   }

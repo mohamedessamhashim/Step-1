@@ -86,6 +86,7 @@ Settings → Appearance & lock can ask for a passcode when the planner opens on 
 ## How the plan is built
 
 - **Phases.** Working phase from the start date; dedicated for the last 14 days before the exam, the last of which is a rest day; then exam day.
+- **Order of the day.** Anki reviews, then the question blocks, then reviewing incorrects and guessed corrects (2 to 4 hours), then First Aid.
 - **Questions per day.** 40 on weekdays, 80 on weekend days from Sat Oct 17, 100 in dedicated, none on self-assessment days. Always in blocks of 40 or fewer.
 - **Self-assessments.** Five on working-phase Saturdays, starting on the Saturday nearest the point where 40% of the unused questions are done; five in dedicated, three days apart, the last one two days before the exam. One that is not taken moves to the next slot.
 - **First Aid.** One hour a day through the chapters in order. Pages per hour is worked out so every chapter finishes before dedicated. Chapters without page numbers are planned by hours until you enter pages. In dedicated it becomes a rapid review of your weakest chapters, ranked by the weak areas you pick after each self-assessment and by your block scores.

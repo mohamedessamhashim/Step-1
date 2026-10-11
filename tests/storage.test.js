@@ -68,10 +68,15 @@ test('loading fills gaps and drops junk instead of failing', () => {
   damaged.scores.broken = { pct: 50 };
   damaged.plan.days.push({ nope: true });
   damaged.firstAid.order = ['cardiovascular', 'ghost'];
+  // A copy saved before review time became a range of hours.
+  delete damaged.settings.reviewHours;
+  damaged.settings.reviewMinutes = 20;
 
   const fixed = migrate(damaged, SEED);
   assert.deepEqual(fixed.settings.caps, SEED.settings.caps);
   assert.equal(fixed.settings.pace.blockMax, 40);
+  assert.deepEqual(fixed.settings.reviewHours, { from: 2, to: 4 });
+  assert.equal('reviewMinutes' in fixed.settings, false);
   assert.equal(fixed.qbank.systems[0].start, 0);
   assert.deepEqual(Object.keys(fixed.log), ['2026-10-12', '2026-11-07'], 'the junk date is dropped');
   assert.equal(fixed.log['2026-10-12'].blocks.b0.done, 25);

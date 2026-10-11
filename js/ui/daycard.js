@@ -12,6 +12,16 @@ const RING_C = 2 * Math.PI * RING_R;
 
 const joinNames = (names) => names.join(' + ');
 
+/** "~2–4 hr" for the review task. Days planned before the change still carry minutes. */
+function reviewTime(task) {
+  if (Array.isArray(task.hours)) {
+    const [from, to] = task.hours;
+    if (!to) return null;
+    return from === to ? `~${to} hr` : `~${from}–${to} hr`;
+  }
+  return task.minutes ? `~${task.minutes} min` : null;
+}
+
 function pageText(parts) {
   const ranges = [];
   for (const p of parts) {
@@ -289,7 +299,7 @@ export function createDayCards(store, actions) {
       else if (task.kind === 'fa') rows.push(faRow(day, task, locked));
       else if (task.kind === 'sa') rows.push(saRow(day, task, locked));
       else if (task.kind === 'sareview') rows.push(simpleRow(day, task, 'Review the self-assessment', 'Go through every question you missed or guessed', locked));
-      else rows.push(simpleRow(day, task, 'Review incorrects', `~${task.minutes} min`, locked));
+      else rows.push(simpleRow(day, task, 'Review incorrects and guessed corrects', reviewTime(task), locked));
     }
 
     let body;

@@ -457,8 +457,9 @@ export function generatePlan(input, today) {
       saSeen += 1;
     }
     blocks.forEach((b, i) => tasks.push({ id: `b${i}`, ...b }));
+    // Reviewing the blocks comes straight after them, before First Aid.
+    if (blocks.length) tasks.push({ id: 'rev', kind: 'review', hours: [settings.reviewHours.from, settings.reviewHours.to] });
     if (r.fa) tasks.push({ id: 'fa', kind: 'fa', ...r.fa });
-    if (blocks.length) tasks.push({ id: 'rev', kind: 'review', minutes: settings.reviewMinutes });
 
     const day = { date: r.date, type: r.type, phase: r.phase, capacity: r.capacity, maxCap: r.maxCap, tasks };
     if (r.type === 'off') day.offLabel = settings.daysOff[r.date] || '';

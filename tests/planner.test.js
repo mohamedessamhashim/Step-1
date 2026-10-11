@@ -448,9 +448,9 @@ test('Anki reviews come first on every study day, and only on study days', () =>
     } else assert.equal(anki.length, 0, `${day.date} (${day.type}) should have no Anki task`);
   }
   // Order on an ordinary day and on a self-assessment day.
-  assert.deepEqual(dayByDate(state, '2026-10-12').tasks.map((t) => t.kind), ['anki', 'qbank', 'fa', 'review']);
+  assert.deepEqual(dayByDate(state, '2026-10-12').tasks.map((t) => t.kind), ['anki', 'qbank', 'review', 'fa']);
   assert.deepEqual(dayByDate(state, '2026-11-07').tasks.map((t) => t.kind), ['anki', 'sa', 'sareview', 'fa']);
-  assert.deepEqual(dayByDate(state, '2026-12-15').tasks.map((t) => t.kind), ['anki', 'qbank', 'qbank', 'qbank', 'fa', 'review']);
+  assert.deepEqual(dayByDate(state, '2026-12-15').tasks.map((t) => t.kind), ['anki', 'qbank', 'qbank', 'qbank', 'review', 'fa']);
 
   // It can be switched off, and it has no effect on the questions.
   const off = fresh(BEFORE_START, (s) => {
@@ -459,6 +459,25 @@ test('Anki reviews come first on every study day, and only on study days', () =>
   assert.ok(off.state.plan.days.every((d) => d.tasks.every((t) => t.kind !== 'anki')));
   assert.equal(plannedUnused(off.state.plan.days), 3255);
   assert.equal(off.summary.qbankFinish, '2026-12-19');
+});
+
+test('reviewing the blocks comes right after them, before First Aid, and takes hours', () => {
+  const { state } = fresh();
+  for (const day of state.plan.days) {
+    const kinds = day.tasks.map((t) => t.kind);
+    const review = kinds.indexOf('review');
+    if (!kinds.includes('qbank')) {
+      assert.equal(review, -1, `${day.date}: nothing to review without blocks`);
+      continue;
+    }
+    assert.equal(review, kinds.lastIndexOf('qbank') + 1, `${day.date}: review must follow the last block`);
+    if (kinds.includes('fa')) assert.ok(review < kinds.indexOf('fa'), `${day.date}: review must come before First Aid`);
+    assert.deepEqual(day.tasks[review], { id: 'rev', kind: 'review', hours: [2, 4] });
+  }
+  const custom = fresh(BEFORE_START, (s) => {
+    s.settings.reviewHours = { from: 3, to: 5 };
+  });
+  assert.deepEqual(dayByDate(custom.state, '2026-10-12').tasks.find((t) => t.kind === 'review').hours, [3, 5]);
 });
 
 test('the planner never mutates its input', () => {

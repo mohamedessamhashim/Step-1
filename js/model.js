@@ -57,6 +57,8 @@ export function normalizeSettings(input, defaults) {
   const caps = { ...d.caps, ...s.caps };
   const sa = { ...d.sa, ...s.sa };
   const fa = { ...d.fa, ...s.fa };
+  const review = { ...d.reviewHours, ...s.reviewHours };
+  const reviewFrom = int(review.from, 0, 12, d.reviewHours.from);
   const dateMap = (obj, value) =>
     Object.fromEntries(
       Object.entries(obj ?? {})
@@ -91,7 +93,7 @@ export function normalizeSettings(input, defaults) {
     },
     randomAfterSa1: s.randomAfterSa1 !== false,
     anki: s.anki !== false,
-    reviewMinutes: int(s.reviewMinutes, 0, 240, d.reviewMinutes),
+    reviewHours: { from: reviewFrom, to: Math.max(reviewFrom, int(review.to, 0, 12, d.reviewHours.to)) },
     goalPct: int(s.goalPct, 1, 100, null),
     daysOff: dateMap(s.daysOff, (v) => String(v ?? '').slice(0, 60)),
     extras: dateMap(s.extras, (v) => int(v, 0, 400, 0)),

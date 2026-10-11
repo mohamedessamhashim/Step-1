@@ -79,7 +79,7 @@ test('ticking tasks and the completion ring', () => {
   let { state } = fresh('2026-10-12');
   const date = '2026-10-12';
   const day = dayByDate(state, date);
-  assert.deepEqual(day.tasks.map((t) => t.id), ['anki', 'b0', 'fa', 'rev']);
+  assert.deepEqual(day.tasks.map((t) => t.id), ['anki', 'b0', 'rev', 'fa']);
   assert.equal(dayProgress(day, state.log[date]).fraction, 0);
 
   state = toggleTask(state, date, 'b0', true, NOW);
@@ -203,6 +203,9 @@ test('settings are kept inside sane bounds', () => {
   assert.equal(s.fa.pagesPerHour, null);
   assert.equal(s.fa.onSaDays, false);
   assert.equal(s.goalPct, 65);
+  assert.deepEqual(s.reviewHours, { from: 2, to: 4 }, 'missing review time falls back to 2 to 4 hours');
+  assert.deepEqual(normalizeSettings({ ...d, reviewHours: { from: 5, to: 3 } }, d).reviewHours, { from: 5, to: 5 }, '"to" is never below "from"');
+  assert.deepEqual(normalizeSettings({ ...d, reviewHours: { from: 1, to: 99 } }, d).reviewHours, { from: 1, to: 12 });
   assert.deepEqual(s.daysOff, { '2026-11-26': 'Thanksgiving' });
   assert.deepEqual(s.extras, { '2026-10-20': 20 });
   assert.deepEqual(normalizeSettings(d, d), createState(SEED).settings);
