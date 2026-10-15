@@ -2,6 +2,16 @@
 
 import assert from 'node:assert/strict';
 import { SEED } from '../data/seed.js';
+
+/**
+ * The scenario most tests are written against: the original pace (40 / 80 / 100)
+ * and a Dec 28 exam. Kept fixed here so the tests do not move when the seed's
+ * defaults are changed.
+ */
+export const CLASSIC = {
+  ...SEED,
+  settings: { ...SEED.settings, examDate: '2026-12-28', pace: { ...SEED.settings.pace, weekday: 40, weekend: 80, dedicated: 100 } },
+};
 import { addDays, dow } from '../js/dates.js';
 import { createState, replan } from '../js/model.js';
 import { firstOpenDate } from '../js/planner.js';
@@ -10,7 +20,7 @@ export const BEFORE_START = '2026-10-10';
 
 /** A fresh state with its plan generated as of `today`. */
 export function fresh(today = BEFORE_START, mutate) {
-  const state = createState(SEED);
+  const state = createState(CLASSIC);
   mutate?.(state);
   return replan(state, today);
 }

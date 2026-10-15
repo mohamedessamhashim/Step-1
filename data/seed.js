@@ -81,10 +81,10 @@ const uwsa = (n) => ({ id: `uwsa${n}`, name: `UWSA ${n}`, questions: 160, parts:
 export const SEED = {
   settings: {
     startDate: '2026-10-11',
-    examDate: '2026-12-28',
+    examDate: '2027-01-14', // the earliest date every question fits at the pace below
     dedicatedDays: 14,
     pace: {
-      weekday: 40,
+      weekday: 20,
       weekend: 80,
       weekendFrom: '2026-10-17', // weekend days before this use the weekday pace
       dedicated: 100,

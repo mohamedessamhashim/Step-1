@@ -2,11 +2,11 @@
 // Each function takes the current state and returns a new one; nothing here
 // touches the DOM, storage or the clock (the caller passes `now`).
 
-import { isDate } from './dates.js';
-import { generatePlan, ledger, splitProportional } from './planner.js';
+import { fmt, isDate, isWeekend } from './dates.js';
+import { earliestExamDate, generatePlan, ledger, splitProportional } from './planner.js';
 import { patchSettings } from './rebalance.js';
 
-export const VERSION = 1;
+export const VERSION = 2;
 const HISTORY_MAX = 100;
 
 const clone = (x) => JSON.parse(JSON.stringify(x));
@@ -38,6 +38,35 @@ export function createState(seed) {
     plan: { days: [] },
     history: [],
   };
+}
+
+// Version 2 (Oct 15, 2026): the qbank pace became 20 on weekdays, 80 at weekends
+// and 100 in dedicated, starting Oct 16, with the exam moved as late as needed for
+// every question to fit. Copies saved before that are upgraded once.
+const PACE_V2 = { weekday: 20, weekend: 80, dedicated: 100 };
+const PACE_V2_FROM = '2026-10-16';
+
+/** Applies one-time changes to a copy saved by an older version. Returns the same object when there is nothing to do. */
+export function upgrade(state, today, now) {
+  if ((state.version ?? 1) >= VERSION) return state;
+  const old = state.settings;
+  const pace = { ...old.pace, ...PACE_V2 };
+  const extras = { ...old.extras };
+  // A day still open before the change keeps the number of questions it already had.
+  const before = generatePlan(state, today);
+  for (const day of before.days) {
+    if (day.date < before.summary.firstOpen || day.date >= PACE_V2_FROM || day.phase !== 'working' || !(day.capacity > 0)) continue;
+    const base = isWeekend(day.date) && day.date >= pace.weekendFrom ? pace.weekend : pace.weekday;
+    const keep = day.capacity - base - (old.extras?.[day.date] ?? 0);
+    if (keep > 0) extras[day.date] = (extras[day.date] ?? 0) + keep;
+  }
+  let next = { ...state, version: VERSION, settings: { ...old, pace, extras } };
+  const earliest = earliestExamDate(next, today);
+  const moved = earliest && earliest > old.examDate;
+  if (moved) next = { ...next, settings: { ...next.settings, examDate: earliest } };
+  const from = today >= PACE_V2_FROM ? today : PACE_V2_FROM;
+  const label = `Pace changed to ${pace.weekday} on weekdays, ${pace.weekend} at weekends and ${pace.dedicated} in dedicated, from ${fmt(from, 'short')}${moved ? `. Exam moved from ${fmt(old.examDate, 'short')} to ${fmt(earliest, 'short')} so every question fits` : ''}`;
+  return touch(note(next, 'upgrade', label, now), now);
 }
 
 /** Regenerates the plan from today on. Past days come back unchanged. */

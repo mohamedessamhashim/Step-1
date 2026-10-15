@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SEED } from '../data/seed.js';
 import {
   clearScore,
   createState,
@@ -25,7 +24,7 @@ import {
 } from '../js/model.js';
 import { progress } from '../js/planner.js';
 import { missedDays } from '../js/rebalance.js';
-import { dayByDate, fresh, sum } from './helpers.js';
+import { CLASSIC as SEED, dayByDate, fresh, sum } from './helpers.js';
 
 const NOW = 1234;
 const faTask = (day) => day.tasks.find((t) => t.kind === 'fa');

@@ -1,11 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SEED } from '../data/seed.js';
 import { addDays, dow, range } from '../js/dates.js';
 import { applyChange, createState, replan, setBlockDone, setBlockPct, setScore, toggleTask, updateChapter, updateSetting } from '../js/model.js';
 import { chapterRanges, earliestExamDate, generatePlan, weakChapters } from '../js/planner.js';
-import { BEFORE_START, checkInvariants, dayByDate, fresh, plannedBySystem, plannedUnused, qbankBlocks, sum, unusedBlocks } from './helpers.js';
+import { CLASSIC as SEED, BEFORE_START, checkInvariants, dayByDate, fresh, plannedBySystem, plannedUnused, qbankBlocks, sum, unusedBlocks } from './helpers.js';
 
 const NOW = 1;
 const types = (state, type) => state.plan.days.filter((d) => d.type === type).map((d) => d.date);

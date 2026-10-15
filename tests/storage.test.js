@@ -1,7 +1,7 @@
 import test from 'node:test';
+import { CLASSIC as SEED } from './helpers.js';
 import assert from 'node:assert/strict';
 
-import { SEED } from '../data/seed.js';
 import { applyChange, createState, replan, setBlockDone, setScore, toggleTask } from '../js/model.js';
 import { exportJson, importJson, KEYS, loadBackup, loadState, migrate, readJson, saveBackup, saveState, writeJson } from '../js/storage.js';
 import { createGistClient, decide, GIST_FILE, SyncError, syncOnce } from '../js/sync.js';

@@ -1,12 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SEED } from '../data/seed.js';
 import { addDays, dow, range } from '../js/dates.js';
 import { applyChange, replan, setBlockDone, toggleTask, undoLast, undoTarget, updateCounts, updateSetting } from '../js/model.js';
 import { dayTotals, earliestExamDate } from '../js/planner.js';
 import { displacedBy, missedDays, previewPatch, rebalanceOptions, STEP } from '../js/rebalance.js';
-import { checkInvariants, dayByDate, fresh, mulberry32, plannedUnused, qbankBlocks, remainingBefore, sum } from './helpers.js';
+import { CLASSIC as SEED, checkInvariants, dayByDate, fresh, mulberry32, plannedUnused, qbankBlocks, remainingBefore, sum } from './helpers.js';
 
 const NOW = 1;
 const planDay = (plan, date) => plan.days.find((d) => d.date === date);

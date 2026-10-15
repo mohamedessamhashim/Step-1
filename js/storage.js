@@ -125,7 +125,8 @@ export function migrate(raw, seed) {
 
   const qbankSystems = systems.length ? systems : base.qbank.systems;
   return {
-    version: VERSION,
+    // Kept as saved, so the app can apply any one-time upgrade (see upgrade() in model.js).
+    version: Math.min(VERSION, Math.max(1, Math.round(num(raw.version, 1)))),
     updatedAt: Math.max(0, num(raw.updatedAt)),
     settings: normalizeSettings(raw.settings, base.settings),
     qbank: {

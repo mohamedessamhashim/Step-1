@@ -3,7 +3,7 @@
 
 import { SEED } from '../data/seed.js';
 import { diffDays, fmt, todayLocal } from './dates.js';
-import { applyChange, createState, replan, undoLast } from './model.js';
+import { applyChange, createState, replan, undoLast, upgrade } from './model.js';
 import { dayTotals, earliestExamDate, progress } from './planner.js';
 import { displacedBy, missedDays } from './rebalance.js';
 import { exportJson, importJson, KEYS, loadBackup, loadState, migrate, readJson, saveBackup, saveState, writeJson } from './storage.js';
@@ -25,6 +25,10 @@ const $ = (id) => document.getElementById(id);
 function createStore({ onEdit }) {
   let today = todayLocal();
   let state = loadState(localStorage, SEED) ?? createState(SEED);
+  // A copy saved by an older version gets its one-time changes now; the note is shown once.
+  const loaded = state;
+  state = upgrade(state, today, Math.max(Date.now(), state.updatedAt + 1));
+  const notice = state !== loaded ? state.history[state.history.length - 1]?.label ?? null : null;
   let summary = null;
   let cache = {};
   let saveTimer = 0;
@@ -60,6 +64,7 @@ function createStore({ onEdit }) {
 
   return {
     selectedDate: null,
+    notice,
     get state() {
       return state;
     },
@@ -98,7 +103,9 @@ function createStore({ onEdit }) {
     },
     /** Swaps in a whole state (sync pull, import, restore). `asEdit` stamps it as this device's newest edit. */
     replace(next, { asEdit = false } = {}) {
-      commit(asEdit ? { ...next, updatedAt: stamp() } : next);
+      const time = Math.max(stamp(), next.updatedAt + 1);
+      const ready = upgrade(next, today, time);
+      commit(asEdit ? { ...ready, updatedAt: time } : ready);
       save();
       emit();
     },
@@ -200,6 +207,7 @@ function createSyncController({ getStore, button, onChange }) {
           if (store.state.updatedAt > 0) saveBackup(localStorage, store.state, 'Replaced by a newer synced copy', Date.now());
           store.replace(result.state);
           toast('Loaded newer data from another device.');
+          if (store.state.updatedAt !== result.state.updatedAt) again = true; // it was upgraded here: send that back
         }
       } else if (store.state.updatedAt !== local.updatedAt) again = true;
       status = 'ok';
@@ -565,6 +573,7 @@ async function main() {
   carousel.show(Math.max(0, indexOf(homeDate())));
   renderAll();
   document.documentElement.dataset.ready = '1';
+  if (store.notice) toast(`${store.notice}.`, { ms: 15000 });
 
   // Ask about unfinished past days once per visit (the banner stays until it is dealt with).
   const missedKey = store.missed.map((m) => m.date).join(',');
